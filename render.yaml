@@ -25,7 +25,6 @@
     name: cargo-celery
     env: docker
     dockerfilePath: Dockerfile.django
-    startCommand: celery -A cargo_ecommerce worker --loglevel=info
     envVars:
       - key: CELERY_BROKER_URL
         value: redis://cargo-redis:6379/0
@@ -35,10 +34,8 @@
     name: cargo-celery-beat
     env: docker
     dockerfilePath: Dockerfile.django
-    startCommand: celery -A cargo_ecommerce beat --loglevel=info
     schedule: "*/5 * * * *"
   - type: web
     name: cargo-flower
     env: docker
     dockerfilePath: Dockerfile.django
-    startCommand: celery -A cargo_ecommerce flower --port=5555 --basic_auth=admin:admin123
