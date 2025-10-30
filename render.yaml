@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: cargo-django
+    env: docker
+    plan: starter
+    dockerfilePath: Dockerfile.django
+    envVars:
+      - key: CELERY_BROKER_URL
+        value: redis://cargo-redis:6379/0
+      - key: CELERY_RESULT_BACKEND
+        value: redis://cargo-redis:6379/0
+      - key: DJANGO_SETTINGS_MODULE
+        value: cargo_ecommerce.settings
+  - type: web
+    name: cargo-node
+    env: docker
+    plan: starter
+    dockerfilePath: Dockerfile.node
+  - type: private_service
+    name: cargo-redis
+    env: docker
+    dockerCommand: redis-server
+    plan: starter
+  - type: worker
+    name: cargo-celery
+    env: docker
+    dockerfilePath: Dockerfile.django
+    startCommand: celery -A cargo_ecommerce worker --loglevel=info
+    envVars:
+      - key: CELERY_BROKER_URL
+        value: redis://cargo-redis:6379/0
+      - key: CELERY_RESULT_BACKEND
+        value: redis://cargo-redis:6379/0
+  - type: cron
+    name: cargo-celery-beat
+    env: docker
+    dockerfilePath: Dockerfile.django
+    startCommand: celery -A cargo_ecommerce beat --loglevel=info
+    schedule: "*/5 * * * *"
+  - type: web
+    name: cargo-flower
+    env: docker
+    dockerfilePath: Dockerfile.django
+    startCommand: celery -A cargo_ecommerce flower --port=5555 --basic_auth=admin:admin123
