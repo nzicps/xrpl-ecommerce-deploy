@@ -1,4 +1,4 @@
-services:
+﻿services:
   - type: web
     name: cargo-django
     env: docker
@@ -16,7 +16,7 @@ services:
     env: docker
     plan: starter
     dockerfilePath: Dockerfile.node
-  - type: private_service
+  - type: pserv
     name: cargo-redis
     env: docker
     dockerCommand: redis-server
